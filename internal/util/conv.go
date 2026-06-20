@@ -2,9 +2,7 @@ package util
 
 import (
 	"encoding/base64"
-	"encoding/binary"
 	"encoding/json"
-	"errors"
 	"os"
 	"strconv"
 	"strings"
@@ -20,34 +18,51 @@ func B64Decode(msg string) []byte {
 	return decoded
 }
 
-func IntToBytes(value int, length int) ([]byte, error) {
-	if length == 4 {
-		buf := make([]byte, 4)
-		binary.LittleEndian.PutUint32(buf, uint32(value))
-		return buf, nil
-	} else if length == 8 {
-		buf := make([]byte, 8)
-		binary.LittleEndian.PutUint64(buf, uint64(value))
-		return buf, nil
-	} else {
-		return nil, errors.New("Length must be 4 or 8.")
+func BytesToInt(orig []byte) int {
+	copy := orig[:]
+	sum := 0
+	scale := 1
+	for _, by := range copy {
+		sum += int(by) * scale
+		scale <<= 8
 	}
+	return sum
 }
 
-func LampsToSol(sats string) string {
+func IntToBytes(orig int) []byte {
+	bytes := []byte{}
+	for orig != 0 {
+		bytes = append(bytes, byte(orig&0xff))
+		orig = orig >> 8
+	}
+	return bytes
+}
+
+func IntToBytesFixed(orig int, leng int) []byte {
+	bytes := []byte{}
+	for orig != 0 {
+		bytes = append(bytes, byte(orig&0xff))
+		orig = orig >> 8
+	}
+	for len(bytes) != leng {
+		bytes = append(bytes, byte(0x00))
+	}
+	return bytes
+}
+func IntToFloatStr(sats string, dec int) string {
 	digits := len(sats)
 	var ans string
 	if sats == "0" {
 		return "0.0"
 	}
-	if digits <= 9 {
-		zero_num := 9 - digits
+	if digits <= dec {
+		zero_num := dec - digits
 		zeros := strings.Repeat("0", zero_num)
 		ans = "0." + zeros + sats
 	} else {
 		sats_byte := []byte(sats)
-		big_byte := sats_byte[:len(sats_byte)-9]
-		small_byte := sats_byte[len(sats_byte)-9:]
+		big_byte := sats_byte[:len(sats_byte)-dec]
+		small_byte := sats_byte[len(sats_byte)-dec:]
 		big := string(big_byte)
 		small := string(small_byte)
 		ans = big + "." + small
@@ -63,21 +78,31 @@ func LampsToSol(sats string) string {
 	ans = string(ans_byte)
 	return ans
 }
-
-func SolToLamps(btc string) int {
+func FloatStrToInt(btc string, dec int) int {
 	sats := 0
+	scale := 1
+	for range dec {
+		scale *= 10
+	}
 	if strings.Contains(btc, ".") {
 		numl := strings.Split(btc, ".")
 		big, _ := strconv.Atoi(numl[0])
-		small_str := numl[1] + strings.Repeat("0", 9-len(numl[1]))
+		small_str := numl[1] + strings.Repeat("0", dec-len(numl[1]))
 		small, _ := strconv.Atoi(small_str)
-		sats += big * 1000000000
+		sats += big * scale
 		sats += small
 	} else {
 		am, _ := strconv.Atoi(btc)
-		sats += am * 1000000000
+		sats += am * scale
 	}
 	return sats
+}
+func LampsToSol(sats string) string {
+	return IntToFloatStr(sats, 9)
+}
+
+func SolToLamps(btc string) int {
+	return FloatStrToInt(btc, 9)
 }
 
 func SaveTx(tx Tx) {

@@ -2,7 +2,6 @@ package util
 
 import (
 	"encoding/csv"
-	"encoding/json"
 	"os"
 )
 
@@ -48,26 +47,6 @@ func SaveAddress(name string, address string) {
 	row = append(row, []byte(address)...)
 	row = append(row, []byte("\n")...)
 	f.Write(row)
-}
-
-func SetAccount(name string, addr string, key string) {
-	MkdirOrNothing("ref")
-	f, _ := os.OpenFile("ref/mainaccount.json", os.O_TRUNC|os.O_CREATE|os.O_WRONLY, 0644)
-	defer f.Close()
-	datamap := map[string]string{
-		"Name":    name,
-		"Address": addr,
-		"Key":     key,
-	}
-	jsondata, _ := json.MarshalIndent(datamap, "", "    ")
-	f.Write(jsondata)
-}
-
-func GetAccount() (string, string, string) {
-	f, _ := os.ReadFile(RelativeToAbsolute("ref", "mainaccount.json"))
-	var receipt map[string]string
-	json.Unmarshal(f, &receipt)
-	return receipt["Name"], receipt["Address"], receipt["Key"]
 }
 
 func NameToAddress(name string) string {

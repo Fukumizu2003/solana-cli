@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"fmt"
+	"solana-cli/internal/config"
 	"solana-cli/internal/util"
 	"strings"
 
@@ -14,6 +15,7 @@ import (
 var show_address bool
 var show_balance bool
 var show_all bool
+var show_token string
 
 // showCmd represents the show command
 var showCmd = &cobra.Command{
@@ -21,7 +23,9 @@ var showCmd = &cobra.Command{
 	Short: "",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		accname, addr, _ := util.GetAccount()
+		st := config.GetAccount()
+		accname := st.Name
+		addr := st.Address
 		if !show_address && !show_balance {
 			fmt.Println("表示する内容を指定してください：")
 			fmt.Println("-a：アドレス")
@@ -48,9 +52,23 @@ var showCmd = &cobra.Command{
 			}
 		}
 		if show_balance {
-			bal := util.GetBalance(addr)
-			balsol := util.LampsToSol(util.IntToStr(bal))
-			fmt.Println("Balance: " + balsol + " SOL")
+			if show_token == "" {
+				bal := util.GetBalance(addr)
+				balsol := util.LampsToSol(util.IntToStr(bal))
+				fmt.Println("Balance: " + balsol + " SOL")
+				return
+			}
+			tokens, e := util.GetAddressTokens(addr)
+			if e != nil {
+				fmt.Println(e)
+				return
+			}
+			infos := util.ReadTokensInfo(tokens)
+			for _, info := range infos {
+				if strings.EqualFold(info["name"].(string), show_token) || strings.EqualFold(info["symbol"].(string), show_token) || strings.EqualFold(info["mint"].(string), show_token) {
+					fmt.Println("Balance: " + info["balancestr"].(string) + " " + info["symbol"].(string))
+				}
+			}
 		}
 	},
 }
@@ -61,6 +79,7 @@ func init() {
 	showCmd.Flags().BoolVarP(&show_address, "address", "a", false, "")
 	showCmd.Flags().BoolVarP(&show_balance, "balance", "b", false, "")
 	showCmd.Flags().BoolVar(&show_all, "all", false, "")
+	showCmd.Flags().StringVar(&show_token, "token", "", "")
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command

@@ -4,6 +4,9 @@ Copyright © 2026 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"encoding/hex"
+	"fmt"
+	"solana-cli/internal/config"
 	"solana-cli/internal/util"
 
 	"github.com/spf13/cobra"
@@ -17,10 +20,12 @@ var signCmd = &cobra.Command{
 	Short: "",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		_, _, privcr := util.GetAccount()
+		privcr := config.GetAccount().Key
 		privkey, _ := util.AesDecrypt(util.B64Decode(privcr), []byte(pw))
 		tx := util.LoadTx()
 		signedtx := util.SignTx(tx, privkey)
+		raw := util.GetMessage(signedtx)
+		fmt.Println("Raw Transaction (HEX):\n" + hex.EncodeToString(raw))
 		util.SaveTx(signedtx)
 	},
 }

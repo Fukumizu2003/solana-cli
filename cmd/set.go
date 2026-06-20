@@ -6,7 +6,7 @@ package cmd
 import (
 	"fmt"
 
-	"solana-cli/internal/util"
+	"solana-cli/internal/config"
 
 	"github.com/spf13/cobra"
 )
@@ -23,21 +23,12 @@ var setCmd = &cobra.Command{
 			fmt.Println("-nフラグによりアカウント名を指定してください。")
 			return
 		}
-		accts := util.LoadAccounts()
-		addr := ""
-		key := ""
-		for _, ac := range accts {
-			if ac[0] == mainAcName {
-				addr = ac[1]
-				key = ac[2]
-				break
-			}
-		}
-		if addr == "" {
-			fmt.Println("指定のアカウント名は存在しません。")
+		st, er := config.SetAccount(mainAcName)
+		if er != nil {
+			fmt.Println(er)
 			return
 		}
-		util.SetAccount(mainAcName, addr, key)
+		config.SaveConfig(*st)
 	},
 }
 

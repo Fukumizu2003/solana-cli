@@ -5,11 +5,18 @@ import (
 	"crypto/cipher"
 	"crypto/ed25519"
 	"crypto/rand"
+	"crypto/sha256"
 	"log"
 
 	"github.com/btcsuite/btcutil/base58"
 	"golang.org/x/crypto/scrypt"
 )
+
+func Sha256(msg []byte) []byte {
+	hasher1 := sha256.New()
+	hasher1.Write(msg)
+	return hasher1.Sum(nil)
+}
 
 func B58Encode(msg []byte) string {
 	return base58.Encode(msg)
@@ -27,6 +34,7 @@ func GenKey(len int) []byte {
 	}
 	return buf
 }
+
 func NewKeypair() (ed25519.PrivateKey, ed25519.PublicKey) {
 	pubKey, privKey, _ := ed25519.GenerateKey(rand.Reader)
 	return privKey, pubKey
@@ -36,16 +44,6 @@ func BytesToKeypair(priv []byte) (ed25519.PrivateKey, ed25519.PublicKey) {
 	privKey := ed25519.NewKeyFromSeed(priv)
 	pubKey := privKey.Public().(ed25519.PublicKey)
 	return privKey, pubKey
-}
-
-func PubkeyToAddress(pub []byte) string {
-	address := B58Encode(pub)
-	return address
-}
-
-func AddressToPubkey(addr string) []byte {
-	pubk := B58Decode(addr)
-	return pubk
 }
 
 func ScryptHashNew(pw []byte) ([]byte, []byte) {

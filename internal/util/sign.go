@@ -60,31 +60,3 @@ func SignTx(tx Tx, priv []byte) Tx {
 	tx.Signatures = append(tx.Signatures, signature)
 	return tx
 }
-
-func GetCols(txtype string) []string {
-	if txtype == "Payment" {
-		return []string{
-			"TransactionType",
-			"Sequence",
-			"DestinationTag",
-			"Amount",
-			"Fee",
-			"SigningPubKey",
-			"TxnSignature",
-			"Account",
-			"Destination",
-		}
-	} else if txtype == "AccountDelete" {
-		return []string{
-			"TransactionType",
-			"Sequence",
-			"DestinationTag",
-			"Fee",
-			"SigningPubKey",
-			"TxnSignature",
-			"Account",
-			"Destination",
-		}
-	}
-	return nil
-}
