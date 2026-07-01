@@ -10,14 +10,14 @@ func MkdirOrNothing(dir string) {
 }
 
 func LoadAccounts() [][]string {
-	f, _ := os.Open(RelativeToAbsolute("ref", "keypair.csv"))
+	f, _ := os.Open(RelativeToAbsolute("ref", "SOL_keypair.csv"))
 	defer f.Close()
 	data, _ := csv.NewReader(f).ReadAll()
 	return data
 }
 
 func LoadDestinations() [][]string {
-	f, _ := os.Open(RelativeToAbsolute("ref", "destinations.csv"))
+	f, _ := os.Open(RelativeToAbsolute("ref", "SOL_destinations.csv"))
 	defer f.Close()
 	data, _ := csv.NewReader(f).ReadAll()
 	return data
@@ -25,7 +25,7 @@ func LoadDestinations() [][]string {
 
 func SaveKeypair(name string, address string, priv string) {
 	MkdirOrNothing("ref")
-	f, _ := os.OpenFile("ref/keypair.csv", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	f, _ := os.OpenFile("ref/SOL_keypair.csv", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	defer f.Close()
 	row := []byte{}
 	row = append(row, []byte(name)...)
@@ -39,7 +39,7 @@ func SaveKeypair(name string, address string, priv string) {
 
 func SaveAddress(name string, address string) {
 	MkdirOrNothing("ref")
-	f, _ := os.OpenFile("ref/destinations.csv", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	f, _ := os.OpenFile("ref/SOL_destinations.csv", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	defer f.Close()
 	row := []byte{}
 	row = append(row, []byte(name)...)

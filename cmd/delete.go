@@ -49,13 +49,13 @@ var deleteCmd = &cobra.Command{
 			var buf bytes.Buffer
 			writer := csv.NewWriter(&buf)
 			writer.WriteAll(new_accounts)
-			os.WriteFile(util.RelativeToAbsolute("ref", "keypair.csv"), buf.Bytes(), 0644)
+			os.WriteFile(util.RelativeToAbsolute("ref", "SOL_keypair.csv"), buf.Bytes(), 0644)
 		}
 		if deflag {
 			var buf bytes.Buffer
 			writer := csv.NewWriter(&buf)
 			writer.WriteAll(new_dests)
-			os.WriteFile(util.RelativeToAbsolute("ref", "destinations.csv"), buf.Bytes(), 0644)
+			os.WriteFile(util.RelativeToAbsolute("ref", "SOL_destinations.csv"), buf.Bytes(), 0644)
 		}
 		return nil
 	},

@@ -33,7 +33,7 @@ type Ix struct {
 
 func LoadTx() Tx {
 	var tx Tx
-	f, _ := os.ReadFile(RelativeToAbsolute("temp", "transaction.json"))
+	f, _ := os.ReadFile(RelativeToAbsolute("temp", "SOL_transaction.json"))
 	json.Unmarshal(f, &tx)
 	return tx
 }

@@ -237,11 +237,11 @@ func GetTokensInfo() []map[string]interface{} {
 
 func SaveTokensInfo(data *[]map[string]interface{}) {
 	save, _ := json.MarshalIndent(*data, "", "    ")
-	os.WriteFile(RelativeToAbsolute("ref", "TokenReference.json"), save, 0644)
+	os.WriteFile(RelativeToAbsolute("ref", "SOL_TokenReference.json"), save, 0644)
 }
 
 func LoadTokensInfo() []map[string]interface{} {
-	data, _ := os.ReadFile(RelativeToAbsolute("ref", "TokenReference.json"))
+	data, _ := os.ReadFile(RelativeToAbsolute("ref", "SOL_TokenReference.json"))
 	var res []map[string]interface{}
 	json.Unmarshal(data, &res)
 	return res

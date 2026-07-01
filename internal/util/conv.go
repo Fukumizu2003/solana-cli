@@ -107,7 +107,7 @@ func SolToLamps(btc string) int {
 
 func SaveTx(tx Tx) {
 	MkdirOrNothing("temp")
-	f, _ := os.OpenFile("temp/transaction.json", os.O_TRUNC|os.O_CREATE|os.O_WRONLY, 0644)
+	f, _ := os.OpenFile("temp/SOL_transaction.json", os.O_TRUNC|os.O_CREATE|os.O_WRONLY, 0644)
 	defer f.Close()
 	save, _ := json.MarshalIndent(tx, "", "    ")
 	f.Write(save)

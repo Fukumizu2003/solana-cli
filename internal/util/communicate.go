@@ -65,7 +65,7 @@ func Broadcast(tx Tx) map[string]interface{} {
 		panic(err)
 	}
 	MkdirOrNothing("temp")
-	f, _ := os.OpenFile("temp/resp.json", os.O_TRUNC|os.O_CREATE|os.O_WRONLY, 0644)
+	f, _ := os.OpenFile("temp/SOL_resp.json", os.O_TRUNC|os.O_CREATE|os.O_WRONLY, 0644)
 	defer f.Close()
 	save, _ := json.MarshalIndent(result, "", "    ")
 	f.Write(save)
